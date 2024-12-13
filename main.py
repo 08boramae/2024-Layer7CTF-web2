@@ -1,13 +1,8 @@
 from fastapi import FastAPI
+from controller import auth, post, chat
 
 app = FastAPI()
 
-
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
+app.include_router(auth.router, prefix="/auth", tags=["auth"])
+app.include_router(post.router, prefix="/post", tags=["post"])
+app.include_router(chat.router, prefix="/chat", tags=["chat"])
