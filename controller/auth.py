@@ -56,7 +56,7 @@ def register(response: Response, data: model.Register):
 
 @router.post("/login")
 def login(response: Response, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
-    user = database.select_user(form_data.username, form_data.password)
+    user = database.login(form_data.username, form_data.password)
     if user is None:
         raise HTTPException(status_code=401, detail='Unauthorized')
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)

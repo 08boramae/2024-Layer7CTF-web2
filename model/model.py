@@ -14,3 +14,11 @@ class Login(BaseModel):
 
 class PostInsert(BaseModel):
     content: str
+
+class ChatMessage(BaseModel):
+    content: str
+
+class CreateChatRoom(BaseModel):
+    room_name: str
+    room_type: str
+    members: list[int]
