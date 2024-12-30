@@ -35,12 +35,13 @@ def create_chat(response: Response, chat_data: CreateChatRoom, current_user: Ann
     }
 
 @router.get("/{chat_id}")
-def get_chat(response: Response, chat_id: int, current_user: Annotated[dict, Depends(get_current_user)]):
+def get_chat(response: Response, chat_id: int, current_user: Annotated[dict, Depends(get_current_user)], draft: str = None):
     chat_data = database.get_chat(chat_id, current_user["uid"])
     response.status_code = status.HTTP_200_OK
     return {
         "status": "200",
         "message": "OK",
+        "draft": draft,
         "data": chat_data
     }
 

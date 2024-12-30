@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
+
 from controller import auth, post, chat, bot
 
 app = FastAPI()
