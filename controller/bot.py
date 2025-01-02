@@ -3,9 +3,11 @@ from datetime import timedelta
 
 from fastapi import APIRouter, Response, status, Depends, HTTPException
 from controller.auth import get_current_user, ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token
-from selenium import webdriver
+from model import model
+from seleniumwire import webdriver
 from selenium.webdriver.chrome.service import Service
-import urllib
+
+from model.model import BotLocation
 
 router = APIRouter()
 ACCESS_TOKEN_EXPIRE_MINUTES = 1
@@ -15,12 +17,12 @@ def index(response: Response):
     return {"status": "200", "message": "OK"}
 
 @router.post('/submit')
-def submit(response: Response, current_user: dict = Depends(get_current_user), location: str = None):
+def submit(response: Response, current_user: dict = Depends(get_current_user), location: BotLocation = None):
     if current_user['id'] != 'admin':
         response.status_code = status.HTTP_401_UNAUTHORIZED
         return {"status": "401", "message": "Unauthorized"}
     # try:
-    check(location)
+    check(location.location)
     response.status_code = status.HTTP_200_OK
     return {"status": "200", "message": "OK"}
     # except Exception as e:
@@ -28,7 +30,6 @@ def submit(response: Response, current_user: dict = Depends(get_current_user), l
     #     return {"status": "400", "message": str(e)}
 
 def read_url(url):
-    service = Service(executable_path="/chromedriver")
     options = webdriver.ChromeOptions()
     for _ in [
         "headless",
@@ -38,7 +39,8 @@ def read_url(url):
         "disable-dev-shm-usage",
     ]:
         options.add_argument(_)
-    driver = webdriver.Chrome(service=service, options=options)
+    service = Service("./chromedriver")
+    driver = webdriver.Chrome(service = service, options=options)
     try:
         driver.implicitly_wait(3)
         driver.set_page_load_timeout(3)
@@ -48,22 +50,17 @@ def read_url(url):
             data={"uid": 0, "id": "bot", "name": "bot"},
             expires_delta=access_token_expires
         )
-        driver.add_cookie({"name": "Authorization", "value": f"Bearer {access_token}"})
+        def interceptor(request):
+            request.headers['Authorization'] = 'Bearer ' + access_token
+        driver.request_interceptor = interceptor
         driver.get(url)
     except Exception as e:
+        print(e)
         driver.quit()
         return False
     driver.quit()
     return True
 
 def check(location):
-    filtered_location = filter(location)
-    url = f"http://127.0.0.1:8000/{urllib.parse.quote(filtered_location)}"
+    url = f"http://127.0.0.1:8000/{location}"
     return read_url(url)
-
-def filter(text):
-    keyword = ["script", "on", "javascript", "window", "self", "this", "document", "location", "(", ")", "&#"]
-    for f in keyword:
-        if f in text.lower():
-            return "NOPE"
-    return text

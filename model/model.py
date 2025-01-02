@@ -22,3 +22,6 @@ class CreateChatRoom(BaseModel):
     room_name: str
     room_type: str
     members: list[int]
+
+class BotLocation(BaseModel):
+    location: str

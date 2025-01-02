@@ -60,7 +60,7 @@ def get_chat(chat_id: int, uid):
         cur.execute('SELECT * FROM chat_members WHERE chat_id = ? AND user_id = ?;',
                     (chat_id, uid))
         if cur.fetchone() is None:
-            return db_exceptions.NotParticipant()
+            raise db_exceptions.NotParticipant()
 
         # 채팅방 정보 가져오기
         cur.execute('''
