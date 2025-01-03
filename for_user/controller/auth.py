@@ -5,10 +5,11 @@ from dao import database
 from model import model
 import jwt
 from typing import Annotated
+import os
 
 router = APIRouter()
 
-SECRET_KEY = "ABCD"
+SECRET_KEY = os.urandom(32)
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -29,6 +30,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
         raise credentials_exception
     return payload
 
+
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
     if expires_delta:
@@ -39,10 +41,12 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
+
 @router.get("/")
 def index(response: Response):
     response.status_code = status.HTTP_200_OK
     return {"status": "200", "message": "OK"}
+
 
 @router.post("/register")
 def register(response: Response, data: model.Register):
@@ -54,6 +58,7 @@ def register(response: Response, data: model.Register):
         response.status_code = status.HTTP_400_BAD_REQUEST
         return {"status": "400", "message": "Bad Request"}
 
+
 @router.post("/login")
 def login(response: Response, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
     user = database.login(form_data.username, form_data.password)
@@ -64,10 +69,10 @@ def login(response: Response, form_data: Annotated[OAuth2PasswordRequestForm, De
         data={"uid": user[0], "id": user[1], "name": user[3]},
         expires_delta=access_token_expires
     )
-    
+
     response.status_code = status.HTTP_200_OK
     return {
-        "status": "200" ,
+        "status": "200",
         "message": "OK",
         "access_token": access_token,
         "token_type": "bearer"

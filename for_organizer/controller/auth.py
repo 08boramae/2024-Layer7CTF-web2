@@ -5,10 +5,11 @@ from dao import database
 from model import model
 import jwt
 from typing import Annotated
+import os
 
 router = APIRouter()
 
-SECRET_KEY = "ABCD"
+SECRET_KEY = os.urandom(32)
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
