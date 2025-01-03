@@ -2,9 +2,8 @@
 import time
 from datetime import timedelta
 
-from fastapi import APIRouter, Response, status, Depends, HTTPException
-from controller.auth import get_current_user, ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token
-from model import model
+from fastapi import APIRouter, Response, status, Depends
+from for_server.controller.auth import get_current_user, ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token
 from seleniumwire import webdriver
 from selenium.webdriver.chrome.service import Service
 
@@ -28,9 +27,6 @@ def submit(response: Response, current_user: dict = Depends(get_current_user), l
     # except Exception as e:
     #     response.status_code = status.HTTP_400_BAD_REQUEST
     #     return {"status": "400", "message": str(e)}
-
-
-from selenium.webdriver.chrome.options import Options
 
 
 def read_url(url):

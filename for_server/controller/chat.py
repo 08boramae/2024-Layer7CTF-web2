@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Response, status, Depends, HTTPException
-from controller.auth import get_current_user
-from dao import database
+from fastapi import APIRouter, Response, status, Depends
+from for_server.controller.auth import get_current_user
+from for_server.dao import database
 from typing import Annotated
-from model.model import *
+from for_server.model.model import *
 from fastapi.responses import HTMLResponse
 
 router = APIRouter()
