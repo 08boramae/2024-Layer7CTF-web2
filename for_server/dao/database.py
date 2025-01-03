@@ -1,5 +1,5 @@
 import sqlite3
-from for_server.exceptions import db_exceptions
+from exceptions import db_exceptions
 
 conn = sqlite3.connect('./database.db', check_same_thread=False)
 

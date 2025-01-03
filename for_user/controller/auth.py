@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Response, status, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from datetime import datetime, timedelta, timezone
-from for_server.dao import database
-from for_server.model import model
+from dao import database
+from model import model
 import jwt
 from typing import Annotated
 

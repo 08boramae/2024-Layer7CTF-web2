@@ -3,7 +3,7 @@ import time
 from datetime import timedelta
 
 from fastapi import APIRouter, Response, status, Depends
-from for_server.controller.auth import get_current_user, ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token
+from controller.auth import get_current_user, ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token
 from seleniumwire import webdriver
 from selenium.webdriver.chrome.service import Service
 

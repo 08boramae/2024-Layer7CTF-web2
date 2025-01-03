@@ -2,9 +2,9 @@ from http.client import HTTPException
 
 from fastapi import APIRouter, Response, status, Depends
 from typing import Annotated
-from for_server.dao import database
-from for_server.model import model
-from for_server.controller.auth import get_current_user
+from dao import database
+from model import model
+from controller.auth import get_current_user
 
 router = APIRouter()
 
