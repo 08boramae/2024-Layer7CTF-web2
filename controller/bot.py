@@ -1,4 +1,5 @@
 # admin only
+import time
 from datetime import timedelta
 
 from fastapi import APIRouter, Response, status, Depends, HTTPException
@@ -7,7 +8,6 @@ from model import model
 from seleniumwire import webdriver
 from selenium.webdriver.chrome.service import Service
 
-from model.model import BotLocation
 
 router = APIRouter()
 ACCESS_TOKEN_EXPIRE_MINUTES = 1
@@ -17,30 +17,44 @@ def index(response: Response):
     return {"status": "200", "message": "OK"}
 
 @router.post('/submit')
-def submit(response: Response, current_user: dict = Depends(get_current_user), location: BotLocation = None):
+def submit(response: Response, current_user: dict = Depends(get_current_user), location: str = None):
     if current_user['id'] != 'admin':
         response.status_code = status.HTTP_401_UNAUTHORIZED
         return {"status": "401", "message": "Unauthorized"}
     # try:
-    check(location.location)
+    check(location)
     response.status_code = status.HTTP_200_OK
     return {"status": "200", "message": "OK"}
     # except Exception as e:
     #     response.status_code = status.HTTP_400_BAD_REQUEST
     #     return {"status": "400", "message": str(e)}
 
+
+from selenium.webdriver.chrome.options import Options
+
+
 def read_url(url):
     options = webdriver.ChromeOptions()
+    # 기존 옵션들
     for _ in [
         "headless",
         "window-size=1920x1080",
         "disable-gpu",
         "no-sandbox",
         "disable-dev-shm-usage",
+        "--disable-web-security",
     ]:
         options.add_argument(_)
+
+    options.set_capability('goog:loggingPrefs', {
+        'browser': 'ALL',
+        'driver': 'ALL',
+        'performance': 'ALL'
+    })
+
     service = Service("./chromedriver")
-    driver = webdriver.Chrome(service = service, options=options)
+    driver = webdriver.Chrome(service=service, options=options)
+
     try:
         driver.implicitly_wait(3)
         driver.set_page_load_timeout(3)
@@ -58,6 +72,7 @@ def read_url(url):
         print(e)
         driver.quit()
         return False
+    time.sleep(1)
     driver.quit()
     return True
 
